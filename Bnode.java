@@ -20,31 +20,39 @@ public class Bnode {
         }
     }
 
-    public void show(int nivel) {
-        System.out.println("Valor: " + x + ", Nível: " + nivel);
-        if (esq != null) esq.show(nivel + 1);
-        if (dir != null) dir.show(nivel + 1);
+    public void calcularMediaPorNivelRecursivo(int nivel, int[] somaNivel, int[] contNivel) {
+        if (nivel == 0) {
+            System.out.print(x + " ");  // Exibe o valor do nó no nível atual
+            somaNivel[0] += x;
+            contNivel[0]++;
+        } else {
+            if (esq != null) esq.calcularMediaPorNivelRecursivo(nivel - 1, somaNivel, contNivel);
+            if (dir != null) dir.calcularMediaPorNivelRecursivo(nivel - 1, somaNivel, contNivel);
+        }
     }
 
-    public int calcularAltura() {
-        int alturaEsq = (esq != null) ? esq.calcularAltura() : 0;
-        int alturaDir = (dir != null) ? dir.calcularAltura() : 0;
+    public int altura() {
+        int alturaEsq = (esq != null) ? esq.altura() : 0;
+        int alturaDir = (dir != null) ? dir.altura() : 0;
         return 1 + Math.max(alturaEsq, alturaDir);
     }
+    public int[] somarValores() {
+        int soma = this.x;
+        int quantidade = 1;
 
-    public int somaValores() {
-        int somaEsq = (esq != null) ? esq.somaValores() : 0;
-        int somaDir = (dir != null) ? dir.somaValores() : 0;
-        return x + somaEsq + somaDir;
+        if (esq != null) {
+            int[] esquerdaSomaQuantidade = esq.somarValores();
+            soma += esquerdaSomaQuantidade[0];
+            quantidade += esquerdaSomaQuantidade[1];
+        }
+
+        if (dir != null) {
+            int[] direitaSomaQuantidade = dir.somarValores();
+            soma += direitaSomaQuantidade[0];
+            quantidade += direitaSomaQuantidade[1];
+        }
+
+        return new int[]{soma, quantidade};
     }
 
-    public int tamanho() {
-        int tamEsq = (esq != null) ? esq.tamanho() : 0;
-        int tamDir = (dir != null) ? dir.tamanho() : 0;
-        return 1 + tamEsq + tamDir;
-    }
-
-    public int calcularMedia(int nivel) {
-        return somaValores() / tamanho();
-    }
 }

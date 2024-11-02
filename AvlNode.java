@@ -16,14 +16,7 @@ public class AvlNode {
         altura = 1 + Math.max(alturaEsq, alturaDir);
     }
 
-    public int calcularFatorBalanceamento() {
-        int alturaEsq = (esq != null) ? esq.altura : 0;
-        int alturaDir = (dir != null) ? dir.altura : 0;
-        return alturaEsq - alturaDir;
-    }
-
     public AvlNode adicionar(int valor) {
-        // Adiciona o valor normalmente
         if (valor < x) {
             if (esq != null) {
                 esq = esq.adicionar(valor);
@@ -37,35 +30,32 @@ public class AvlNode {
                 dir = new AvlNode(valor);
             }
         } else {
-            return this; // Não permitir duplicatas
+            return this;
         }
-
-        // Atualiza a altura do nó atual
         atualizarAltura();
-
-        // Calcula o fator de balanceamento
         int fatorBalanceamento = calcularFatorBalanceamento();
 
-        // Rotação à esquerda
         if (fatorBalanceamento > 1 && valor < esq.x) {
             return rotacaoDireita();
         }
-        // Rotação à direita
         if (fatorBalanceamento < -1 && valor > dir.x) {
             return rotacaoEsquerda();
         }
-        // Rotação dupla à esquerda
         if (fatorBalanceamento > 1 && valor > esq.x) {
             esq = esq.rotacaoEsquerda();
             return rotacaoDireita();
         }
-        // Rotação dupla à direita
         if (fatorBalanceamento < -1 && valor < dir.x) {
             dir = dir.rotacaoDireita();
             return rotacaoEsquerda();
         }
+        return this;
+    }
 
-        return this; // Retorna o nó (pode ser o novo nó após rotação)
+    public int calcularFatorBalanceamento() {
+        int alturaEsq = (esq != null) ? esq.altura : 0;
+        int alturaDir = (dir != null) ? dir.altura : 0;
+        return alturaEsq - alturaDir;
     }
 
     public AvlNode rotacaoDireita() {
@@ -86,29 +76,38 @@ public class AvlNode {
         return novaRaiz;
     }
 
-    public void show(int nivel) {
-        System.out.println("Valor: " + x + ", Nível: " + nivel);
-        if (esq != null) esq.show(nivel + 1);
-        if (dir != null) dir.show(nivel + 1);
+    public void calcularMediaPorNivelRecursivo(int nivel, int[] somaNivel, int[] contNivel) {
+        if (nivel == 0) {
+            System.out.print(x + " ");  // Exibe o valor do nó no nível atual
+            somaNivel[0] += x;
+            contNivel[0]++;
+        } else {
+            if (esq != null) esq.calcularMediaPorNivelRecursivo(nivel - 1, somaNivel, contNivel);
+            if (dir != null) dir.calcularMediaPorNivelRecursivo(nivel - 1, somaNivel, contNivel);
+        }
     }
 
-    public int calcularAltura() {
-        return altura;
-    }
+    public int[] somarValores() {
+        int soma = this.x;
+        int quantidade = 1;
 
-    public int somaValores() {
-        int somaEsq = (esq != null) ? esq.somaValores() : 0;
-        int somaDir = (dir != null) ? dir.somaValores() : 0;
-        return x + somaEsq + somaDir;
-    }
+        if (esq != null) {
+            int[] esquerdaSomaQuantidade = esq.somarValores();
+            soma += esquerdaSomaQuantidade[0];
+            quantidade += esquerdaSomaQuantidade[1];
+        }
 
-    public int tamanho() {
-        int tamEsq = (esq != null) ? esq.tamanho() : 0;
-        int tamDir = (dir != null) ? dir.tamanho() : 0;
-        return 1 + tamEsq + tamDir;
-    }
+        if (dir != null) {
+            int[] direitaSomaQuantidade = dir.somarValores();
+            soma += direitaSomaQuantidade[0];
+            quantidade += direitaSomaQuantidade[1];
+        }
 
-    public int calcularMedia() {
-        return somaValores() / tamanho();
+        return new int[]{soma, quantidade};
+    }
+    public int altura() {
+        int alturaEsquerda = (esq != null) ? esq.altura() : 0;
+        int alturaDireita = (dir != null) ? dir.altura() : 0;
+        return 1 + Math.max(alturaEsquerda, alturaDireita);
     }
 }

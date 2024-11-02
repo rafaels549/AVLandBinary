@@ -13,21 +13,24 @@ public class AvlTree {
         }
     }
 
-    public void show() {
-        if (raiz != null) {
-            raiz.show(0);
+    public void calcularMediaPorNivel() {
+        int altura = (raiz != null) ? raiz.altura() : 0;
+        for (int nivel = 0; nivel < altura; nivel++) {
+            int[] somaNivel = {0};
+            int[] contNivel = {0};
+            System.out.print("Nível " + nivel + ": ");
+            raiz.calcularMediaPorNivelRecursivo(nivel, somaNivel, contNivel);
+            if (contNivel[0] > 0) {
+                System.out.println(" | Média: " + (somaNivel[0] / contNivel[0]));
+            }
         }
     }
-
-    public int calcularAltura() {
-        return (raiz != null) ? raiz.calcularAltura() : 0;
+    public double calcularMediaTotal() {
+        if (raiz == null) return 0;
+        int[] somaQuantidade = raiz.somarValores();
+        return (double) somaQuantidade[0] / somaQuantidade[1];
     }
-
-    public int somaValores() {
-        return (raiz != null) ? raiz.somaValores() : 0;
-    }
-
-    public int tamanho() {
-        return (raiz != null) ? raiz.tamanho() : 0;
+    public int altura() {
+        return (raiz != null) ? raiz.altura() : 0;
     }
 }
